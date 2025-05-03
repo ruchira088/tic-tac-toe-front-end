@@ -26,6 +26,13 @@ const UserSignUpResponse = z.object({
 
 type UserSignUpResponse = z.infer<typeof UserSignUpResponse>
 
+const handleSignUp = (responseBody: unknown): User => {
+  const userSignupResponse: UserSignUpResponse = UserSignUpResponse.parse(responseBody)
+  AuthenticationToken.set(userSignupResponse.authToken.token)
+
+  return userSignupResponse.user
+}
+
 export const signUp = async (email: string, username: string, password: string): Promise<User> => {
   const response = await axiosClient.post<unknown>("/user", {
     email,
@@ -33,10 +40,25 @@ export const signUp = async (email: string, username: string, password: string):
     password
   })
 
-  const userSignupResponse: UserSignUpResponse = UserSignUpResponse.parse(response.data)
-  AuthenticationToken.set(userSignupResponse.authToken.token)
+  return handleSignUp(response.data)
+}
 
-  return userSignupResponse.user
+export const signUpAsGuest = async (): Promise<User> => {
+  const response = await axiosClient.post<unknown>("/user/guest")
+
+  return handleSignUp(response.data)
+}
+
+export const signIn = async (email: string, password: string): Promise<AuthToken> => {
+  const response = await axiosClient.post<unknown>("/auth", {
+    email,
+    password
+  })
+
+  const authToken: AuthToken = AuthToken.parse(response.data)
+  AuthenticationToken.set(authToken.token)
+
+  return authToken
 }
 
 const getUser = async () => {

@@ -1,0 +1,12 @@
+.signUpPage {
+  .signUpForm {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .otherOptions {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+  }
+}
