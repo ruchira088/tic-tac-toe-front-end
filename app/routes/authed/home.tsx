@@ -1,10 +1,10 @@
 import {Box, Button, Modal, TextField} from "@mui/material"
 import {faker} from "@faker-js/faker"
 import {type FC, useEffect, useState} from "react"
-import {createGame} from "~/services/game-service"
+import {createGame, getPendingGames, type PendingGame} from "~/services/game-service"
 import {useNavigate} from "react-router"
 
-const newGameModalStyle = {
+const modalStyle = {
   position: 'absolute',
   top: '50%',
   left: '50%',
@@ -35,7 +35,7 @@ const NewGameModal: FC<NewGameModalProps> = props => {
   }
 
   return (
-    <Box sx={newGameModalStyle}>
+    <Box sx={modalStyle}>
       <TextField
         label="Game Title"
         value={gameTitle}
@@ -47,17 +47,48 @@ const NewGameModal: FC<NewGameModalProps> = props => {
   )
 }
 
+type JoinGameModalProps = {
+  onClose: () => void
+}
+
+const JoinGameModal: FC<JoinGameModalProps> = props => {
+  const [pendingGames, setPendingGames] = useState<PendingGame[]>([])
+
+  const loadPendingGames = async () => {
+    const pendingGames: PendingGame[] = await getPendingGames()
+    setPendingGames(pendingGames)
+  }
+
+  useEffect(() => {
+    loadPendingGames()
+  }, [])
+
+  return (
+    <Box sx={modalStyle}>
+      <Button onClick={props.onClose}>Close</Button>
+    </Box>
+  )
+}
+
+enum OpenModal {
+  NewGame,
+  JoinGame
+}
+
 const Home = () => {
-  const [isNewGameModalOpen, setNewGameModalOpen] = useState<boolean>(false)
+  const [openModal, setOpenModal] = useState<OpenModal | undefined>(undefined)
 
   return (
     <div>
       <div>
-        <Button onClick={() => setNewGameModalOpen(true)}>New Game</Button>
-        <Button>Join Game</Button>
+        <Button onClick={() => setOpenModal(OpenModal.NewGame)}>New Game</Button>
+        <Button onClick={() => setOpenModal(OpenModal.JoinGame)}>Join Game</Button>
       </div>
-      <Modal open={isNewGameModalOpen} onClose={() => setNewGameModalOpen(false)}>
-        <NewGameModal onClose={() => setNewGameModalOpen(false)}/>
+      <Modal open={openModal === OpenModal.NewGame} onClose={() => setOpenModal(undefined)}>
+        <NewGameModal onClose={() => setOpenModal(undefined)}/>
+      </Modal>
+      <Modal open={openModal === OpenModal.JoinGame} onClose={() => setOpenModal(undefined)}>
+        <JoinGameModal onClose={() => setOpenModal(undefined)}/>
       </Modal>
     </div>
   )
