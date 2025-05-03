@@ -1,10 +1,10 @@
-import {AuthToken} from "~/services/kv-store"
+import {AuthenticationToken} from "~/services/kv-store"
 import {Outlet, useNavigate} from "react-router"
 import {useEffect} from "react"
 
 const UnauthedLayout = () => {
   const navigate = useNavigate()
-  const authToken = AuthToken.get()
+  const authToken = AuthenticationToken.get()
 
   useEffect(() => {
     if (authToken !== undefined) {

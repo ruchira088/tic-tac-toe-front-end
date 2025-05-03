@@ -9,9 +9,12 @@ interface KvStore<T> {
 }
 
 class CookieStore implements KvStore<string> {
+  constructor(private expires: number) {
+  }
+
   delete(key: string): string | undefined {
     const existingValue = this.get(key)
-    Cookies.remove(key)
+    Cookies.remove(key, {expires: this.expires})
 
     return existingValue
   }
@@ -21,7 +24,7 @@ class CookieStore implements KvStore<string> {
   }
 
   set(key: string, value: string): void {
-    Cookies.set(key, value)
+    Cookies.set(key, value, {expires: this.expires})
   }
 }
 
@@ -44,4 +47,4 @@ class AuthVault {
   }
 }
 
-export const AuthToken = new AuthVault(new CookieStore())
+export const AuthenticationToken = new AuthVault(new CookieStore(30))

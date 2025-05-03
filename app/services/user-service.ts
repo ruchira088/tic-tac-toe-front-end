@@ -1,34 +1,44 @@
 import {z} from "zod"
-import axiosClient, {getUserToken, setUserToken} from "~/services/http-client"
+import axiosClient from "~/services/http-client"
+import {AuthenticationToken} from "~/services/kv-store"
 
-const RegisteredUser = z.object({
+const AuthToken = z.object({
+  token: z.string(),
   userId: z.string(),
-  name: z.string(),
-  createdAt: z.string().datetime()
+  issuedAt: z.string()
 })
 
-type RegisteredUser = z.infer<typeof RegisteredUser>
+type AuthToken = z.infer<typeof AuthToken>
 
-const registerUser = async (): Promise<RegisteredUser> => {
-  const response = await axiosClient.post<unknown>("/user")
+const User = z.object({
+  id: z.string(),
+  email: z.string().or(z.null()).optional(),
+  username: z.string(),
+  createdAt: z.string()
+})
 
-  const registeredUser: RegisteredUser = RegisteredUser.parse(response.data)
+type User = z.infer<typeof User>
 
-  return registeredUser
+const UserSignUpResponse = z.object({
+  user: User,
+  authToken: AuthToken
+})
+
+type UserSignUpResponse = z.infer<typeof UserSignUpResponse>
+
+export const signUp = async (email: string, username: string, password: string): Promise<User> => {
+  const response = await axiosClient.post<unknown>("/user", {
+    email,
+    username,
+    password
+  })
+
+  const userSignupResponse: UserSignUpResponse = UserSignUpResponse.parse(response.data)
+  AuthenticationToken.set(userSignupResponse.authToken.token)
+
+  return userSignupResponse.user
 }
 
 const getUser = async () => {
   const response = await axiosClient.get<unknown>("/user")
-}
-
-const signIn = async () => {
-  const userToken: string | undefined = getUserToken()
-
-  if (userToken !== undefined) {
-    return getUser()
-  } else {
-    const registeredUser = await registerUser()
-    setUserToken(registeredUser.userId)
-    return getUser()
-  }
 }
