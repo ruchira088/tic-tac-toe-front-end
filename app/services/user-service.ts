@@ -60,7 +60,3 @@ export const signIn = async (email: string, password: string): Promise<AuthToken
 
   return authToken
 }
-
-const getUser = async () => {
-  const response = await axiosClient.get<unknown>("/user")
-}

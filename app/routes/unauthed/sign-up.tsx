@@ -1,6 +1,6 @@
 import {Button, TextField} from "@mui/material"
 import {useState} from "react"
-import {Link, useNavigate} from "react-router"
+import {Link, useNavigate, useSearchParams} from "react-router"
 import {signUp, signUpAsGuest} from "~/services/user-service"
 
 import styles from "./sign-up.module.scss"
@@ -12,16 +12,22 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState("")
 
   const navigate = useNavigate()
+  const [searchParams]= useSearchParams()
+
+  const redirect: string | null = searchParams.get("redirect")
+  const nextUrl = redirect || "/home"
 
   const onSignUp = async () => {
     await signUp(email, username, password)
-    navigate("/home")
+    navigate(nextUrl)
   }
 
   const playAsGuest = async () => {
     await signUpAsGuest()
-    navigate("/home")
+    navigate(nextUrl)
   }
+
+  const signInUrl = "/sign-in" + (redirect ? `?redirect=${redirect}` : "")
 
   return (
     <div className={styles.signUpPage}>
@@ -29,28 +35,29 @@ const SignUp = () => {
         <TextField
           label="Email"
           value={email}
-          onChange={e => setEmail(e.target.value)}/>
+          onChange={e => setEmail(e.target.value)}
+          className={styles.field}/>
         <TextField
           label="Username"
           value={username}
           onChange={e => setUsername(e.target.value)}
-        />
+          className={styles.field}/>
         <TextField
           label="Password"
           type="password"
           value={password}
           onChange={e => setPassword(e.target.value)}
-        />
+          className={styles.field}/>
         <TextField
           label="Confirm password"
           type="password"
           value={confirmPassword}
           onChange={e => setConfirmPassword(e.target.value)}
-        />
+          className={styles.field}/>
         <Button onClick={onSignUp}>Sign Up</Button>
       </div>
       <div className={styles.otherOptions}>
-        <Link to="/sign-in">Already have an account</Link>
+        <Link to={signInUrl}>Already have an account</Link>
         <Button onClick={playAsGuest}>Play As Guest</Button>
       </div>
     </div>
