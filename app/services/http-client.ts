@@ -1,9 +1,10 @@
 import axios, {type AxiosInstance} from "axios"
 import {AuthenticationToken} from "~/services/kv-store"
+import {BASE_URL} from "~/config/config"
 
 const axiosClient: AxiosInstance =
   axios.create({
-    baseURL: "http://localhost:8080"
+    baseURL: BASE_URL
   })
 
 axiosClient.interceptors.request.use(config => {

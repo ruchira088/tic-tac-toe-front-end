@@ -1,6 +1,8 @@
 import {
   Box,
   Button,
+  Card,
+  CardContent,
   Modal,
   Table,
   TableBody,
@@ -74,7 +76,7 @@ const JoinGameModal: FC<JoinGameModalProps> = props => {
 
   const loadPendingGames = async () => {
     const pendingGames: PendingGame[] = await getPendingGames()
-    setPendingGames(pendingGames.filter(pendingGame => pendingGame.createdBy !== user.id))
+    setPendingGames(pendingGames)
   }
 
   useEffect(() => {
@@ -91,29 +93,52 @@ const JoinGameModal: FC<JoinGameModalProps> = props => {
         <div>No Pending Games Found</div>
       )
     } else {
+      const pendingGamesCreatedByOthers: PendingGame[] =
+        pendingGames.filter(pendingGame => pendingGame.createdBy !== user.id)
+
+      const pendingGamesCreatedByUser =
+        pendingGames.filter(pendingGame => pendingGame.createdBy === user.id)
+
       return (
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Title</TableCell>
-                <TableCell>Created At</TableCell>
-                <TableCell>Created By</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {
-                pendingGames.map(pendingGame =>
-                  <TableRow key={pendingGame.id} onClick={() => onJoin(pendingGame)}>
-                    <TableCell>{pendingGame.title}</TableCell>
-                    <TableCell>{pendingGame.createdAt}</TableCell>
-                    <TableCell>{pendingGame.createdBy}</TableCell>
+        <div>
+          {
+            pendingGamesCreatedByOthers.length > 0 &&
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Title</TableCell>
+                    <TableCell>Created At</TableCell>
+                    <TableCell>Created By</TableCell>
                   </TableRow>
-                )
-              }
-            </TableBody>
-          </Table>
-        </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {
+                    pendingGamesCreatedByOthers
+                      .map(pendingGame =>
+                        <TableRow key={pendingGame.id} onClick={() => onJoin(pendingGame)}>
+                          <TableCell>{pendingGame.title}</TableCell>
+                          <TableCell>{pendingGame.createdAt}</TableCell>
+                          <TableCell>{pendingGame.createdBy}</TableCell>
+                        </TableRow>
+                      )
+                  }
+                </TableBody>
+              </Table>
+            </TableContainer>
+          }
+          {
+            pendingGamesCreatedByUser.length > 0 &&
+            pendingGamesCreatedByUser.map(pendingGame =>
+              <Card onClick={() => onJoin(pendingGame)}>
+                <CardContent>
+                  <div>{pendingGame.title}</div>
+                  <div>{pendingGame.createdAt}</div>
+                </CardContent>
+              </Card>
+            )
+          }
+        </div>
       )
     }
   })()
