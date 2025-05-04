@@ -1,8 +1,20 @@
-import {Box, Button, Modal, TextField} from "@mui/material"
+import {
+  Box,
+  Button,
+  Modal,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField
+} from "@mui/material"
 import {faker} from "@faker-js/faker"
 import {type FC, useEffect, useState} from "react"
 import {createGame, getPendingGames, type PendingGame} from "~/services/game-service"
 import {useNavigate} from "react-router"
+import {useUser} from "~/contexts/user-context"
 
 const modalStyle = {
   position: 'absolute',
@@ -17,7 +29,7 @@ const modalStyle = {
 }
 
 type NewGameModalProps = {
-  onClose: () => void
+  readonly onClose: () => void
 }
 
 const NewGameModal: FC<NewGameModalProps> = props => {
@@ -48,23 +60,67 @@ const NewGameModal: FC<NewGameModalProps> = props => {
 }
 
 type JoinGameModalProps = {
-  onClose: () => void
+  readonly onClose: () => void
 }
 
 const JoinGameModal: FC<JoinGameModalProps> = props => {
-  const [pendingGames, setPendingGames] = useState<PendingGame[]>([])
+  const [pendingGames, setPendingGames] = useState<PendingGame[] | undefined>(undefined)
+  const user = useUser()
+  const navigate = useNavigate()
+
+  const onJoin = (pendingGame: PendingGame) => {
+    navigate(`/game/id/${pendingGame.id}`)
+  }
 
   const loadPendingGames = async () => {
     const pendingGames: PendingGame[] = await getPendingGames()
-    setPendingGames(pendingGames)
+    setPendingGames(pendingGames.filter(pendingGame => pendingGame.createdBy !== user.id))
   }
 
   useEffect(() => {
     loadPendingGames()
   }, [])
 
+  const content = (() => {
+    if (pendingGames === undefined) {
+      return (
+        <div>Loading</div>
+      )
+    } else if (pendingGames.length === 0) {
+      return (
+        <div>No Pending Games Found</div>
+      )
+    } else {
+      return (
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Title</TableCell>
+                <TableCell>Created At</TableCell>
+                <TableCell>Created By</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {
+                pendingGames.map(pendingGame =>
+                  <TableRow key={pendingGame.id} onClick={() => onJoin(pendingGame)}>
+                    <TableCell>{pendingGame.title}</TableCell>
+                    <TableCell>{pendingGame.createdAt}</TableCell>
+                    <TableCell>{pendingGame.createdBy}</TableCell>
+                  </TableRow>
+                )
+              }
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )
+    }
+  })()
+
   return (
     <Box sx={modalStyle}>
+      {content}
       <Button onClick={props.onClose}>Close</Button>
     </Box>
   )

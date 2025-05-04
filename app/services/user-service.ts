@@ -17,7 +17,7 @@ const User = z.object({
   createdAt: z.string()
 })
 
-type User = z.infer<typeof User>
+export type User = z.infer<typeof User>
 
 const UserSignUpResponse = z.object({
   user: User,
@@ -59,4 +59,11 @@ export const signIn = async (email: string, password: string): Promise<AuthToken
   AuthenticationToken.set(authToken.token)
 
   return authToken
+}
+
+export const getUser = async (): Promise<User> => {
+  const response = await axiosClient.get<unknown>("/user")
+  const user: User = User.parse(response.data)
+
+  return user
 }
