@@ -4,9 +4,13 @@
     border-collapse: collapse;
 
     .cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       border: 1px solid black;
-      height: 10em;
-      width: 10em;
+      font-size: 10em;
+      height: 1em;
+      width: 1em;
     }
   }
 }
