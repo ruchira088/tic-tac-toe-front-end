@@ -37,11 +37,9 @@ const GamePage = ({params}: Route.ComponentProps) => {
 
   const onMessage = (message: Message) => {
     if (check(Move, message)) {
-      const updatedGame: Game = GameSchema.parse({...game, moves: game!.moves.concat(message)})
-      setGame(updatedGame)
+      setGame(game => GameSchema.parse({...game, moves: game!.moves.concat(message)}))
     } else if (check(Winner, message)) {
-      const updatedGame: Game = GameSchema.parse({...game, winner: message})
-      setGame(updatedGame)
+      setGame(game => GameSchema.parse({...game, winner: message}))
     }
   }
 
@@ -90,9 +88,9 @@ const GamePage = ({params}: Route.ComponentProps) => {
 
   useEffect(() => {
     if (game !== undefined) {
-      return subscribeToGameUpdates(params.gameId, onMessage)
+      return subscribeToGameUpdates(game.id, onMessage)
     }
-  }, [gameStatus])
+  }, [game?.id])
 
   if (game !== undefined) {
     return (
