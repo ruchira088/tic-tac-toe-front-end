@@ -1,16 +1,31 @@
+$border: 1px solid black;
+
 .board {
+  display: flex;
+  flex-direction: column;
+
   .row {
     display: flex;
-    border-collapse: collapse;
+    margin: auto;
+    border: $border;
+
+    &:nth-child(2) {
+      border-top: none;
+      border-bottom: none;
+    }
 
     .cell {
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid black;
       font-size: 10em;
       height: 1em;
       width: 1em;
+
+      &:nth-child(2) {
+        border-left: $border;
+        border-right: $border;
+      }
     }
   }
 }
