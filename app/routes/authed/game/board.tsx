@@ -2,6 +2,7 @@ import type {Coordinate, Game, Move} from "~/services/game-service"
 import type {FC} from "react"
 
 import styles from "./board.module.scss"
+import classNames from "classnames"
 
 enum Symbol {
   Circle = "O",
@@ -36,6 +37,10 @@ const Board: FC<BoardProps> = props => {
     grid[move.coordinate.y][move.coordinate.x] = move.playerId === props.game.playerOneId ? Symbol.Circle : Symbol.Cross
   })
 
+  const nextRemoval: Coordinate | null =
+    props.game.winner === null &&
+    applicableMoves.length === 6 ? applicableMoves[0].coordinate : null
+
   return (
     <div className={styles.board}>
       {
@@ -43,7 +48,10 @@ const Board: FC<BoardProps> = props => {
           <div key={y} className={styles.row}>
             {
               row.map((cell, x) =>
-                <div key={x} className={styles.cell} onClick={() => props.onCellClick({x, y})}>
+                <div
+                  key={x}
+                  className={classNames(styles.cell, {[styles.nextRemoval]: nextRemoval?.x === x && nextRemoval.y === y})}
+                  onClick={() => props.onCellClick({x, y})}>
                   {cell}
                 </div>
               )

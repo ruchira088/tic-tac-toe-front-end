@@ -37,9 +37,13 @@ const GamePage = ({params}: Route.ComponentProps) => {
 
   const onMessage = (message: Message) => {
     if (check(Move, message)) {
-      setGame(game => GameSchema.parse({...game, moves: game!.moves.concat(message)}))
+      const move: Move = message
+      if (move.playerId !== user.id) {
+        setGame(game => GameSchema.parse({...game, moves: game!.moves.concat(move)}))
+      }
     } else if (check(Winner, message)) {
-      setGame(game => GameSchema.parse({...game, winner: message}))
+      const winner: Winner = message
+      setGame(game => GameSchema.parse({...game, winner}))
     }
   }
 
@@ -70,15 +74,22 @@ const GamePage = ({params}: Route.ComponentProps) => {
     }
   }
 
-  const onCellClick = async (coordinate: Coordinate) => {
-    if (game !== undefined) {
-      const isTurn =
-        game.moves.length === 0 && game.playerOneId === user.id ||
+  const isTurn =
+    game !== undefined && (
+      game.moves.length === 0 ? game.playerOneId === user.id :
         game.moves[game.moves.length - 1].playerId !== user.id
+    )
 
-      if (isTurn) {
-        await move(params.gameId, coordinate)
-      }
+  const onCellClick = async (coordinate: Coordinate) => {
+    if (isTurn) {
+      setGame(game => GameSchema.parse({
+            ...game,
+            moves: game!.moves.concat({playerId: user.id, coordinate: coordinate, performedAt: new Date()})
+          }
+        )
+      )
+
+      await move(params.gameId, coordinate)
     }
   }
 

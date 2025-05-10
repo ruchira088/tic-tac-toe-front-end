@@ -22,6 +22,16 @@ $border: 1px solid black;
       height: 1em;
       width: 1em;
 
+      @keyframes blink {
+        50% {
+          opacity: 0.25;
+        }
+      }
+
+      &.nextRemoval {
+        animation: blink 1.5s ease-in-out infinite;
+      }
+
       &:nth-child(2) {
         border-left: $border;
         border-right: $border;
