@@ -5,7 +5,7 @@ export default [
 
   layout("routes/authed/layout.tsx", [
     route("/home", "routes/authed/home.tsx"),
-    route("/game/id/:gameId", "routes/authed/game.tsx"),
+    route("/game/id/:gameId", "routes/authed/game/game-page.tsx")
   ]),
 
   layout("routes/unauthed/layout.tsx", [

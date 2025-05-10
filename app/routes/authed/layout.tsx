@@ -19,7 +19,12 @@ const AuthedLayout = () => {
 
   useEffect(() => {
     if (authToken !== undefined) {
-      getUser().then(setUser)
+      getUser()
+        .then(setUser)
+        .catch(() => {
+          AuthenticationToken.delete()
+          navigate("/sign-in?redirect=" + location.pathname)
+        })
     }
   }, [])
 

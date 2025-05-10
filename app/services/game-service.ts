@@ -1,5 +1,6 @@
 import {z} from "zod"
 import axiosClient from "~/services/http-client"
+import {WS_BASE_URL} from "~/config/config"
 
 const PendingGame = z.object({
   id: z.string(),
@@ -18,7 +19,7 @@ const Coordinate = z.object({
 
 export type Coordinate = z.infer<typeof Coordinate>
 
-const Move = z.object({
+export const Move = z.object({
   playerId: z.string(),
   performedAt: z.date({coerce: true}),
   coordinate: Coordinate
@@ -32,12 +33,14 @@ enum WinningRule {
   Vertical = "Vertical"
 }
 
-const Winner = z.object({
+export const Winner = z.object({
   playerId: z.string(),
   winningRule: z.nativeEnum(WinningRule)
 })
 
-const Game = z.object({
+export type Winner = z.infer<typeof Winner>
+
+export const Game = z.object({
   id: z.string(),
   title: z.string(),
   createdAt: z.date({coerce: true}),
@@ -60,6 +63,25 @@ function ListResponse<T>(type: z.ZodType<T>) {
 }
 
 export type ListResponse<T> = z.infer<ReturnType<typeof ListResponse<T>>>
+
+export enum WsMessageType {
+  Ping = "PING",
+  MoveUpdate = "MOVE_UPDATE",
+  Winner = "WINNER"
+}
+
+const PingMessage = z.object({
+  userId: z.string(),
+  timestamp: z.date({coerce: true})
+})
+
+const WsMessage = z.discriminatedUnion("type", [
+  z.object({type: z.literal(WsMessageType.Ping), data: PingMessage}),
+  z.object({type: z.literal(WsMessageType.MoveUpdate), data: Move}),
+  z.object({type: z.literal(WsMessageType.Winner), data: Winner})
+])
+
+export type Message = Move | Winner
 
 export const createGame = async (gameTitle: string): Promise<PendingGame> => {
   const response = await axiosClient.post<unknown>("/game/pending", {gameTitle})
@@ -99,4 +121,33 @@ export const getGameById = async (gameId: string): Promise<Game | null> => {
 
   const game: Game = Game.parse(response.data)
   return game
+}
+
+export const move = async (gameId: string, coordinate: Coordinate): Promise<Game> => {
+  const response = await axiosClient.post<unknown>(`/game/id/${gameId}/move`, coordinate)
+  const game: Game = Game.parse(response.data)
+
+  return game
+}
+
+export const subscribeToGameUpdates = (gameId: string, onMessage: (msg: Message) => void): (() => void) => {
+  const webSocket = new WebSocket(`${WS_BASE_URL}/game/id/${gameId}/updates`)
+
+  webSocket.onopen = () => {
+  }
+
+  webSocket.onmessage = (event) => {
+    const message = WsMessage.parse(JSON.parse(event.data))
+
+    if (message.type !== WsMessageType.Ping) {
+      onMessage(message.data)
+    }
+  }
+
+  webSocket.onclose = () => {
+  }
+
+  return () => {
+    webSocket.close()
+  }
 }
