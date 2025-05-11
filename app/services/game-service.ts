@@ -27,7 +27,7 @@ export const Move = z.object({
 
 export type Move = z.infer<typeof Move>
 
-enum WinningRule {
+export enum WinningRule {
   Diagonal = "Diagonal",
   Horizontal = "Horizontal",
   Vertical = "Vertical"
@@ -36,7 +36,7 @@ enum WinningRule {
 export const Winner = z.object({
   playerId: z.string(),
   winningRule: z.nativeEnum(WinningRule),
-  coordinate: z.array(Coordinate)
+  coordinates: z.array(Coordinate)
 })
 
 export type Winner = z.infer<typeof Winner>
