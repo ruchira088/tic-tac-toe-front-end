@@ -8,6 +8,7 @@ $border: 1px solid black;
     display: flex;
     margin: auto;
     border: $border;
+    background: white;
 
     &:nth-child(2) {
       border-top: none;

@@ -35,7 +35,8 @@ enum WinningRule {
 
 export const Winner = z.object({
   playerId: z.string(),
-  winningRule: z.nativeEnum(WinningRule)
+  winningRule: z.nativeEnum(WinningRule),
+  coordinate: z.array(Coordinate)
 })
 
 export type Winner = z.infer<typeof Winner>
