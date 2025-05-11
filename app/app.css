@@ -3,6 +3,11 @@
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-html,
+html, body {
+  height: 100%;
+  margin: auto;
+}
+
 body {
+  background: linear-gradient(to bottom right, #6964F1, #DD4AAC) no-repeat fixed;
 }

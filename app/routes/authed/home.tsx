@@ -17,6 +17,7 @@ import {type FC, useEffect, useState} from "react"
 import {createGame, getPendingGames, type PendingGame} from "~/services/game-service"
 import {useNavigate} from "react-router"
 import {useUser} from "~/contexts/user-context"
+import {AuthenticationToken} from "~/services/kv-store"
 
 const modalStyle = {
   position: 'absolute',
@@ -158,12 +159,19 @@ enum OpenModal {
 
 const Home = () => {
   const [openModal, setOpenModal] = useState<OpenModal | undefined>(undefined)
+  const navigate = useNavigate()
+
+  const onLogout = () => {
+    AuthenticationToken.delete()
+    navigate("/sign-in")
+  }
 
   return (
     <div>
       <div>
         <Button onClick={() => setOpenModal(OpenModal.NewGame)}>New Game</Button>
         <Button onClick={() => setOpenModal(OpenModal.JoinGame)}>Join Game</Button>
+        <Button onClick={onLogout}>Logout</Button>
       </div>
       <Modal open={openModal === OpenModal.NewGame} onClose={() => setOpenModal(undefined)}>
         <NewGameModal onClose={() => setOpenModal(undefined)}/>
