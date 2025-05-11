@@ -1,0 +1,71 @@
+.homePage {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  .menu {
+    min-width: 20em;
+    width: 50%;
+    max-width: 30em;
+    background: white;
+    padding: 2em;
+    border-radius: 0.5em;
+
+    .header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      .logo {
+        width: 4em;
+      }
+
+      .title {
+        font-size: 2em;
+        font-weight: bold;
+        margin: 0.5em;
+      }
+    }
+
+    .topMenu, .bottomMenu {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topMenu {
+      margin-bottom: 4em;
+    }
+
+    .option {
+      margin: 0.5em 0;
+      padding: 1em;
+      font-size: 1.2em;
+    }
+  }
+}
+
+.newGameModal {
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.5em;
+
+  .newGameModalGameTitle {
+    input {
+      font-size: 1.5em;
+    }
+  }
+
+  .newGameModalActions {
+    margin-top: 3em;
+    display: flex;
+
+    .newGameModalButton {
+      font-size: 1.2em;
+      margin: 0.5em;
+      flex: 1;
+    }
+  }
+}

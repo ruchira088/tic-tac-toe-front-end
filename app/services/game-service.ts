@@ -134,6 +134,7 @@ export const subscribeToGameUpdates = (gameId: string, onMessage: (msg: Message)
   const webSocket = new WebSocket(`${WS_BASE_URL}/game/id/${gameId}/updates`)
 
   webSocket.onopen = () => {
+    console.log("WebSocket opened")
   }
 
   webSocket.onmessage = (event) => {

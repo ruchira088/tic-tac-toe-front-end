@@ -18,6 +18,9 @@ import {createGame, getPendingGames, type PendingGame} from "~/services/game-ser
 import {useNavigate} from "react-router"
 import {useUser} from "~/contexts/user-context"
 import {AuthenticationToken} from "~/services/kv-store"
+import logo from "~/images/logo.svg"
+
+import styles from "./home.module.scss"
 
 const modalStyle = {
   position: 'absolute',
@@ -26,7 +29,6 @@ const modalStyle = {
   transform: 'translate(-50%, -50%)',
   width: 400,
   bgcolor: 'background.paper',
-  border: '2px solid #000',
   boxShadow: 24,
   p: 4,
 }
@@ -50,14 +52,17 @@ const NewGameModal: FC<NewGameModalProps> = props => {
   }
 
   return (
-    <Box sx={modalStyle}>
+    <Box sx={modalStyle} className={styles.newGameModal}>
       <TextField
+        className={styles.newGameModalGameTitle}
         label="Game Title"
         value={gameTitle}
         onChange={e => setGameTitle(e.target.value)}
       />
-      <Button onClick={onCreate}>Create</Button>
-      <Button onClick={props.onClose}>Close</Button>
+      <div className={styles.newGameModalActions}>
+        <Button onClick={onCreate} variant="contained" className={styles.newGameModalButton}>Create</Button>
+        <Button onClick={props.onClose} variant="outlined" className={styles.newGameModalButton}>Close</Button>
+      </div>
     </Box>
   )
 }
@@ -167,11 +172,21 @@ const Home = () => {
   }
 
   return (
-    <div>
-      <div>
-        <Button onClick={() => setOpenModal(OpenModal.NewGame)}>New Game</Button>
-        <Button onClick={() => setOpenModal(OpenModal.JoinGame)}>Join Game</Button>
-        <Button onClick={onLogout}>Logout</Button>
+    <div className={styles.homePage}>
+      <div className={styles.menu}>
+        <div className={styles.header}>
+          <img src={logo} alt="logo" className={styles.logo}/>
+          <div className={styles.title}>Tic Tac Toe</div>
+        </div>
+        <div className={styles.topMenu}>
+          <Button className={styles.option} variant="contained" onClick={() => setOpenModal(OpenModal.NewGame)}>New
+            Game</Button>
+          <Button className={styles.option} variant="contained" onClick={() => setOpenModal(OpenModal.JoinGame)}>Join
+            Game</Button>
+        </div>
+        <div className={styles.bottomMenu}>
+          <Button className={styles.option} variant="outlined" onClick={onLogout}>Logout</Button>
+        </div>
       </div>
       <Modal open={openModal === OpenModal.NewGame} onClose={() => setOpenModal(undefined)}>
         <NewGameModal onClose={() => setOpenModal(undefined)}/>

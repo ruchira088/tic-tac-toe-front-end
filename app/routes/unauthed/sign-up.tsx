@@ -4,6 +4,7 @@ import {Link, useNavigate, useSearchParams} from "react-router"
 import {signUp, signUpAsGuest} from "~/services/user-service"
 
 import styles from "./sign-up.module.scss"
+import logo from "~/images/logo.svg"
 
 const SignUp = () => {
   const [email, setEmail] = useState("")
@@ -31,34 +32,41 @@ const SignUp = () => {
 
   return (
     <div className={styles.signUpPage}>
-      <div className={styles.signUpForm}>
-        <TextField
-          label="Email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          className={styles.field}/>
-        <TextField
-          label="Username"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
-          className={styles.field}/>
-        <TextField
-          label="Password"
-          type="password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          className={styles.field}/>
-        <TextField
-          label="Confirm password"
-          type="password"
-          value={confirmPassword}
-          onChange={e => setConfirmPassword(e.target.value)}
-          className={styles.field}/>
-        <Button onClick={onSignUp}>Sign Up</Button>
-      </div>
-      <div className={styles.otherOptions}>
-        <Link to={signInUrl}>Already have an account</Link>
-        <Button onClick={playAsGuest}>Play As Guest</Button>
+      <div className={styles.signUpDialog}>
+        <div className={styles.signUpHeader}>
+          <img src={logo} alt="logo" className={styles.logo}/>
+          <div className={styles.signUpHeading}>Tic Tac Toe</div>
+          <div className={styles.signUpSubHeading}>Register for an account</div>
+        </div>
+        <div className={styles.signUpForm}>
+          <TextField
+            label="Email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            className={styles.field}/>
+          <TextField
+            label="Username"
+            value={username}
+            onChange={e => setUsername(e.target.value)}
+            className={styles.field}/>
+          <TextField
+            label="Password"
+            type="password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            className={styles.field}/>
+          <TextField
+            label="Confirm password"
+            type="password"
+            value={confirmPassword}
+            onChange={e => setConfirmPassword(e.target.value)}
+            className={styles.field}/>
+          <Button variant="contained" onClick={onSignUp}>Sign Up</Button>
+        </div>
+        <div className={styles.otherOptions}>
+          <div>Already have an account? <Link to={signInUrl}>Sign In</Link></div>
+          <Button onClick={playAsGuest}>Play As Guest</Button>
+        </div>
       </div>
     </div>
   )

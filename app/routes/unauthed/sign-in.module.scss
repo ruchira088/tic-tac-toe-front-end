@@ -5,28 +5,30 @@
   align-items: center;
   justify-content: center;
 
-  .signInHeader {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    .logo {
-      width: 4em;
-    }
-
-    .signInHeading {
-      font-size: 2em;
-      font-weight: bold;
-      margin: 0.5em;
-    }
-  }
-
   .signInDialog {
     background: white;
     padding: 2em;
     border-radius: 0.5em;
-    min-width: 25em;
+    min-width: 20em;
+    width: 50%;
+    max-width: 30em;
+
+    .signInHeader {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      .logo {
+        width: 4em;
+      }
+
+      .signInHeading {
+        font-size: 2em;
+        font-weight: bold;
+        margin: 0.5em;
+      }
+    }
 
     .signInForm {
       display: flex;
