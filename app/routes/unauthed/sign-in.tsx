@@ -32,9 +32,9 @@ const SignIn = () => {
     <div className={styles.signInPage}>
       <div className={styles.signInDialog}>
         <div className={styles.signInHeader}>
-          <img src={logo} alt="logo"/>
-          <div>Tic Tac Toe</div>
-          <div>Please login to your account</div>
+          <img src={logo} alt="logo" className={styles.logo}/>
+          <div className={styles.signInHeading}>Tic Tac Toe</div>
+          <div className={styles.signInSubHeading}>Please login to your account</div>
         </div>
         <div className={styles.signInForm}>
           <TextField
@@ -50,7 +50,7 @@ const SignIn = () => {
             onChange={e => setPassword(e.target.value)}
             className={styles.field}/>
 
-          <Button variant="contained" onClick={onSignIn}>Sign in</Button>
+          <Button variant="contained" onClick={onSignIn} className={styles.signInButton}>Sign in</Button>
         </div>
         <div className={styles.otherOptions}>
           <div>Don't have an account? <Link to={signUpUrl}>Sign Up</Link></div>

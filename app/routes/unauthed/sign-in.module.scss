@@ -10,6 +10,16 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
+    .logo {
+      width: 4em;
+    }
+
+    .signInHeading {
+      font-size: 2em;
+      font-weight: bold;
+      margin: 0.5em;
+    }
   }
 
   .signInDialog {
@@ -23,6 +33,11 @@
       flex-direction: column;
 
       .field {
+        margin: 1em 0;
+      }
+
+      .signInButton {
+        font-size: 1.1em;
         margin: 1em 0;
       }
     }
