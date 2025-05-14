@@ -151,6 +151,7 @@ export const subscribeToGameUpdates = (gameId: string, onMessage: (msg: Message)
   }
 
   return () => {
+    console.log("Closing WebSocket")
     webSocket.close()
   }
 }

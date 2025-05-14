@@ -1,0 +1,41 @@
+.gamePage {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.waitingForAnotherPlayer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+
+  .waitingProgress {
+    text-align: center;
+    width: 75%;
+
+    .waitingProgressTitle {
+      font-size: 1.5em;
+      padding: 1em 0;
+    }
+  }
+
+  .shareLink {
+    position: relative;
+    margin: 1em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .shareLinkCopy {
+      position: absolute;
+      top: 3em;
+      color: white;
+      background: mediumpurple;
+      padding: 0.5em;
+      border-radius: 0.5em;
+    }
+  }
+}
+

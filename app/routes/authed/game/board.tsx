@@ -25,6 +25,7 @@ const createGrid = (size: number): (Symbol | undefined)[][] => {
 
 type BoardProps = {
   readonly game: Game
+  readonly isTurn: boolean
   readonly onCellClick: (coordinate: Coordinate) => void
 }
 
