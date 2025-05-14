@@ -23,9 +23,18 @@ function check<T extends ZodTypeAny>(schema: T, value: unknown): value is z.infe
 
 const NowPlaying: FC<NowPlayingProps> = props => {
   const [game, setGame] = useState(props.game)
+  const [websocket, setWebsocket] = useState<WebSocket | null>(null)
   const user = useUser()
 
-  useEffect(() => subscribeToGameUpdates(game.id, onMessage), [game.id])
+  useEffect(() => {
+    const websocket = subscribeToGameUpdates(game.id, onMessage)
+    setWebsocket(websocket)
+
+    return () => {
+      websocket.close()
+      setWebsocket(null)
+    }
+  }, [game.id])
 
   const onMessage = (message: Message) => {
     if (check(Move, message)) {
@@ -51,7 +60,13 @@ const NowPlaying: FC<NowPlayingProps> = props => {
           }
         )
       )
+
       await move(game.id, coordinate)
+
+      if (websocket?.readyState === websocket?.CLOSED) {
+        const websocket = subscribeToGameUpdates(game.id, onMessage)
+        setWebsocket(websocket)
+      }
     }
   }
 

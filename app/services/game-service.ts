@@ -131,7 +131,7 @@ export const move = async (gameId: string, coordinate: Coordinate): Promise<Game
   return game
 }
 
-export const subscribeToGameUpdates = (gameId: string, onMessage: (msg: Message) => void): (() => void) => {
+export const subscribeToGameUpdates = (gameId: string, onMessage: (msg: Message) => void): WebSocket => {
   const webSocket = new WebSocket(`${WS_BASE_URL}/game/id/${gameId}/updates`)
 
   webSocket.onopen = () => {
@@ -150,8 +150,5 @@ export const subscribeToGameUpdates = (gameId: string, onMessage: (msg: Message)
     console.log("WebSocket closed")
   }
 
-  return () => {
-    console.log("Closing WebSocket")
-    webSocket.close()
-  }
+  return webSocket
 }
