@@ -11,6 +11,7 @@ import styles from "./game-page.module.scss"
 enum GameStatus {
   ACTIVE,
   LOADING,
+  JOINING,
   WAITING_FOR_ANOTHER_PLAYER,
   NOT_FOUND,
   ENDED
@@ -42,10 +43,14 @@ const GamePage = ({params}: Route.ComponentProps) => {
       await sleep(1000)
       await loadGame()
     } else {
-      const game: Game = await joinGame(params.gameId)
-      setGame(game)
-      setGameStatus(GameStatus.ACTIVE)
+      setGameStatus(GameStatus.JOINING)
     }
+  }
+
+  const onGameJoin = async () => {
+    const game: Game = await joinGame(params.gameId)
+    setGame(game)
+    setGameStatus(GameStatus.ACTIVE)
   }
 
   useEffect(() => {
@@ -54,11 +59,13 @@ const GamePage = ({params}: Route.ComponentProps) => {
 
   const Content = () => {
     if (game !== undefined) {
-      return <NowPlaying game={game} onGameChanged={setGame}/>
+      return <NowPlaying game={game}/>
     } else if (gameStatus === GameStatus.NOT_FOUND) {
       return <div>Loading</div>
     } else if (gameStatus === GameStatus.WAITING_FOR_ANOTHER_PLAYER) {
       return <WaitingForAnotherPlayer/>
+    } else if (gameStatus === GameStatus.JOINING) {
+      return <Button variant="contained" onClick={onGameJoin}>Join Game</Button>
     } else {
       return <CircularProgress color="inherit" size="5em"/>
     }
@@ -69,7 +76,6 @@ const GamePage = ({params}: Route.ComponentProps) => {
       <Content/>
     </div>
   )
-
 }
 
 const WaitingForAnotherPlayer = () => {

@@ -1,4 +1,4 @@
-import {type FC, useEffect} from "react"
+import {type FC, useEffect, useState} from "react"
 import {
   type Coordinate,
   Game as GameSchema,
@@ -15,7 +15,6 @@ import Board from "~/routes/authed/game/board"
 
 type NowPlayingProps = {
   readonly game: Game
-  readonly onGameChanged: (game: Game) => void
 }
 
 function check<T extends ZodTypeAny>(schema: T, value: unknown): value is z.infer<T> {
@@ -23,7 +22,7 @@ function check<T extends ZodTypeAny>(schema: T, value: unknown): value is z.infe
 }
 
 const NowPlaying: FC<NowPlayingProps> = props => {
-  const {game, onGameChanged} = props
+  const [game, setGame] = useState(props.game)
   const user = useUser()
 
   useEffect(() => subscribeToGameUpdates(game.id, onMessage), [game.id])
@@ -32,11 +31,11 @@ const NowPlaying: FC<NowPlayingProps> = props => {
     if (check(Move, message)) {
       const move: Move = message
       if (move.playerId !== user.id) {
-        onGameChanged(GameSchema.parse({...game, moves: game!.moves.concat(move)}))
+        setGame(game => GameSchema.parse({...game, moves: game.moves.concat(move)}))
       }
     } else if (check(Winner, message)) {
       const winner: Winner = message
-      onGameChanged(GameSchema.parse({...game, winner}))
+      setGame(game => GameSchema.parse({...game, winner}))
     }
   }
 
@@ -46,13 +45,12 @@ const NowPlaying: FC<NowPlayingProps> = props => {
 
   const onCellClick = async (coordinate: Coordinate) => {
     if (isTurn) {
-      onGameChanged(GameSchema.parse({
+      setGame(game => GameSchema.parse({
             ...game,
-            moves: game!.moves.concat({playerId: user.id, coordinate: coordinate, performedAt: new Date()})
+            moves: game.moves.concat({playerId: user.id, coordinate: coordinate, performedAt: new Date()})
           }
         )
       )
-
       await move(game.id, coordinate)
     }
   }
