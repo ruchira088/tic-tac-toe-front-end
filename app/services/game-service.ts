@@ -1,6 +1,6 @@
 import {z} from "zod"
 import axiosClient from "~/services/http-client"
-import {WS_BASE_URL} from "~/config/config"
+import {BASE_URL, WS_BASE_URL} from "~/config/config"
 
 const PendingGame = z.object({
   id: z.string(),
@@ -20,6 +20,7 @@ const Coordinate = z.object({
 export type Coordinate = z.infer<typeof Coordinate>
 
 export const Move = z.object({
+  id: z.string().nullable().optional(),
   playerId: z.string(),
   performedAt: z.date({coerce: true}),
   coordinate: Coordinate
@@ -65,7 +66,12 @@ function ListResponse<T>(type: z.ZodType<T>) {
 
 export type ListResponse<T> = z.infer<ReturnType<typeof ListResponse<T>>>
 
-export enum WsMessageType {
+enum SseMessageType {
+  MoveUpdate = "MOVE_UPDATE",
+  Winner = "WINNER"
+}
+
+enum WsMessageType {
   Ping = "PING",
   MoveUpdate = "MOVE_UPDATE",
   Winner = "WINNER"
@@ -131,7 +137,7 @@ export const move = async (gameId: string, coordinate: Coordinate): Promise<Game
   return game
 }
 
-export const subscribeToGameUpdates = (gameId: string, onMessage: (msg: Message) => void): WebSocket => {
+export const subscribeToGameUpdatesViaWebSocket = (gameId: string, onMessage: (msg: Message) => void): WebSocket => {
   const webSocket = new WebSocket(`${WS_BASE_URL}/game/id/${gameId}/updates`)
 
   webSocket.onopen = () => {
@@ -151,4 +157,28 @@ export const subscribeToGameUpdates = (gameId: string, onMessage: (msg: Message)
   }
 
   return webSocket
+}
+
+export const subscribeToGameUpdatesViaSse = (gameId: string, onMessage: (msg: Message) => void): EventSource => {
+  const eventSource: EventSource = new EventSource(`${BASE_URL}/game/id/${gameId}/updates`, {withCredentials: true})
+
+  eventSource.addEventListener(SseMessageType.MoveUpdate, event => {
+    const move: Move = Move.parse(event.data)
+    onMessage(move)
+  })
+
+  eventSource.addEventListener(SseMessageType.Winner, event => {
+    const winner: Winner = Winner.parse(event.data)
+    onMessage(winner)
+  })
+
+  eventSource.onopen = () => {
+    console.log("SSE opened")
+  }
+
+  eventSource.onerror = error => {
+    console.log(`SSE error: ${JSON.stringify(error)}`)
+  }
+
+  return eventSource
 }

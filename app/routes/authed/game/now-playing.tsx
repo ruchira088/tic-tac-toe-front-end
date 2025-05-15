@@ -3,10 +3,12 @@ import {
   type Coordinate,
   Game as GameSchema,
   type Game,
+  getGameById,
   type Message,
   move,
   Move,
-  subscribeToGameUpdates,
+  subscribeToGameUpdatesViaSse,
+  subscribeToGameUpdatesViaWebSocket,
   Winner
 } from "~/services/game-service"
 import {useUser} from "~/contexts/user-context"
@@ -26,19 +28,46 @@ const NowPlaying: FC<NowPlayingProps> = props => {
   const user = useUser()
 
   useEffect(() => {
-    let websocket = subscribeToGameUpdates(game.id, onMessage)
+    let websocket: WebSocket | null = null
+    let eventSource: EventSource | null = null
 
-    const intervalId = setInterval(() => {
-      if (websocket.readyState === websocket.CLOSED) {
-        websocket = subscribeToGameUpdates(game.id, onMessage)
+    try {
+      websocket = subscribeToGameUpdatesViaWebSocket(game.id, onMessage)
+    } catch (error) {
+      console.error("Unable to connect to game updates via WebSockets. Attempting to connect via SSE...")
+      eventSource = subscribeToGameUpdatesViaSse(game.id, onMessage)
+    }
+
+    const intervalId = setInterval(async () => {
+      let refresh = false
+
+      if (websocket !== null && websocket.readyState === websocket.CLOSED) {
+        websocket = subscribeToGameUpdatesViaWebSocket(game.id, onMessage)
+        refresh = true
       }
-    }, 5000)
+
+      if (eventSource !== null && eventSource.readyState === eventSource.CLOSED) {
+        eventSource = subscribeToGameUpdatesViaSse(game.id, onMessage)
+        refresh = true
+      }
+
+      if (refresh) {
+        const updatedGame: Game | null = await getGameById(game.id)
+
+        if (updatedGame) {
+          setGame(updatedGame)
+        }
+      }
+
+    }, 1000)
 
     return () => {
-      websocket.close()
+      websocket?.close()
+      eventSource?.close()
       clearInterval(intervalId)
     }
-  }, [game.id])
+  }, [game.id]
+  )
 
   const onMessage = (message: Message) => {
     if (check(Move, message)) {
