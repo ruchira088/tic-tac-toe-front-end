@@ -15,7 +15,7 @@ import {
 import {faker} from "@faker-js/faker"
 import {type FC, useEffect, useState} from "react"
 import {createGame, getPendingGames, type PendingGame} from "~/services/game-service"
-import {useNavigate} from "react-router"
+import {useMatches, useNavigate} from "react-router"
 import {useUser} from "~/contexts/user-context"
 import {AuthenticationToken} from "~/services/kv-store"
 import logo from "~/images/logo.svg"
@@ -163,13 +163,29 @@ enum OpenModal {
 }
 
 const Home = () => {
+  const matches = useMatches()
   const [openModal, setOpenModal] = useState<OpenModal | undefined>(undefined)
+
+  const lastMatchId = matches[matches.length - 1].id
+
+  useEffect(() => {
+    if (lastMatchId === "new-game") {
+      setOpenModal(OpenModal.NewGame)
+    } else if (lastMatchId === "join-game") {
+      setOpenModal(OpenModal.JoinGame)
+    } else {
+      setOpenModal(undefined)
+    }
+  }, [lastMatchId])
+
   const navigate = useNavigate()
 
   const onLogout = () => {
     AuthenticationToken.delete()
     navigate("/sign-in")
   }
+
+  const navigateToHome = () => navigate("/home")
 
   return (
     <div className={styles.homePage}>
@@ -179,20 +195,20 @@ const Home = () => {
           <div className={styles.title}>Tic Tac Toe</div>
         </div>
         <div className={styles.topMenu}>
-          <Button className={styles.option} variant="contained" onClick={() => setOpenModal(OpenModal.NewGame)}>New
+          <Button className={styles.option} variant="contained" onClick={() => navigate("/home/new-game")}>New
             Game</Button>
-          <Button className={styles.option} variant="contained" onClick={() => setOpenModal(OpenModal.JoinGame)}>Join
+          <Button className={styles.option} variant="contained" onClick={() => navigate("/home/join-game")}>Join
             Game</Button>
         </div>
         <div className={styles.bottomMenu}>
           <Button className={styles.option} variant="outlined" onClick={onLogout}>Logout</Button>
         </div>
       </div>
-      <Modal open={openModal === OpenModal.NewGame} onClose={() => setOpenModal(undefined)}>
-        <NewGameModal onClose={() => setOpenModal(undefined)}/>
+      <Modal open={openModal === OpenModal.NewGame} onClose={navigateToHome}>
+        <NewGameModal onClose={navigateToHome}/>
       </Modal>
-      <Modal open={openModal === OpenModal.JoinGame} onClose={() => setOpenModal(undefined)}>
-        <JoinGameModal onClose={() => setOpenModal(undefined)}/>
+      <Modal open={openModal === OpenModal.JoinGame} onClose={navigateToHome}>
+        <JoinGameModal onClose={navigateToHome}/>
       </Modal>
     </div>
   )
