@@ -1,5 +1,4 @@
 import Cookies from "js-cookie"
-import {BASE_URL} from "~/config/config"
 
 interface KvStore<T> {
   get(key: string): T | undefined
@@ -7,6 +6,29 @@ interface KvStore<T> {
   set(key: string, value: T): void
 
   delete(key: string): T | undefined
+}
+
+class LocalStorage implements KvStore<string> {
+  delete(key: string): string | undefined {
+    const existingValue = this.get(key)
+    localStorage.removeItem(key)
+    return existingValue
+  }
+
+  get(key: string): string | undefined {
+    const value: string | null = localStorage.getItem(key)
+
+    if (value === null) {
+      return undefined
+    } else {
+      return value
+    }
+  }
+
+  set(key: string, value: string): void {
+    localStorage.setItem(key, value)
+  }
+
 }
 
 class CookieStore implements KvStore<string> {
@@ -49,4 +71,4 @@ class AuthVault {
 }
 
 export const AuthenticationToken =
-  new AuthVault(new CookieStore(new URL(window.location.href).hostname, 30))
+  new AuthVault(new LocalStorage())
