@@ -4,7 +4,6 @@ import {BASE_URL} from "~/config/config"
 
 const axiosClient: AxiosInstance =
   axios.create({
-    // withCredentials: true,
     baseURL: BASE_URL
   })
 

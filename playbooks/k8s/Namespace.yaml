@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ namespace }}
+  labels:
+    project: tic-tac-toe-front-end
+    branch: {{ git_branch }}

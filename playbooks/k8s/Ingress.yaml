@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: front-end-ingress
+  namespace: {{ namespace }}
+spec:
+  tls:
+    - secretName: front-end-tls-secret
+      hosts:
+        - {{ hostname }}
+  rules:
+    - host: {{ hostname }}
+      http:
+        paths:
+          - pathType: ImplementationSpecific
+            backend:
+              service:
+                name: front-end-service
+                port:
+                  name: http-port

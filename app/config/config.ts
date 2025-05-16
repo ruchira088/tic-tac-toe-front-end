@@ -1,4 +1,29 @@
-export const BASE_URL = "http://localhost:8080"
+const API_URL_QUERY_PARAMETER = "API_URL"
+
+const baseUrl = () => {
+  const location = window.location
+  const queryParams: URLSearchParams = new URLSearchParams(location.search)
+  const apiUrlViaQueryParams = queryParams.get(API_URL_QUERY_PARAMETER)
+
+  if (apiUrlViaQueryParams) {
+    const url = new URL(location.href)
+    url.searchParams.delete(API_URL_QUERY_PARAMETER)
+    window.history.replaceState({}, "", url.toString())
+
+    return apiUrlViaQueryParams
+  } else {
+    const apiUrlViaEnv = import.meta.env.VITE_API_URL
+
+    if (apiUrlViaEnv) {
+      return apiUrlViaEnv
+    } else {
+      const apiUrl = `${location.protocol}//api.${location.host}`
+      return apiUrl
+    }
+  }
+}
+
+export const BASE_URL = baseUrl()
 
 const getWsBaseUrl = (baseUrl: string) => {
   const url = new URL(baseUrl)
@@ -10,4 +35,4 @@ const getWsBaseUrl = (baseUrl: string) => {
   return `${protocol}://${host}${path}`
 }
 
-export const WS_BASE_URL = getWsBaseUrl(BASE_URL)
+export const wsBaseUrl = () => getWsBaseUrl(BASE_URL)

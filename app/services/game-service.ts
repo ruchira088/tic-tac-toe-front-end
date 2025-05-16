@@ -1,6 +1,6 @@
 import {z} from "zod"
 import axiosClient from "~/services/http-client"
-import {BASE_URL, WS_BASE_URL} from "~/config/config"
+import {BASE_URL, wsBaseUrl} from "~/config/config"
 
 const PendingGame = z.object({
   id: z.string(),
@@ -138,7 +138,7 @@ export const move = async (gameId: string, coordinate: Coordinate): Promise<Game
 }
 
 export const subscribeToGameUpdatesViaWebSocket = (gameId: string, onMessage: (msg: Message) => void): WebSocket => {
-  const webSocket = new WebSocket(`${WS_BASE_URL}/game/id/${gameId}/updates`)
+  const webSocket = new WebSocket(`${wsBaseUrl()}/game/id/${gameId}/updates`)
 
   webSocket.onopen = () => {
     console.log("WebSocket opened")

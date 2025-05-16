@@ -48,7 +48,5 @@ class AuthVault {
   }
 }
 
-console.log(BASE_URL)
-
 export const AuthenticationToken =
   new AuthVault(new CookieStore(new URL(BASE_URL).hostname, 30))
