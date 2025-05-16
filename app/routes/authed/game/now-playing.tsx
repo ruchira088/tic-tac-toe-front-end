@@ -14,6 +14,7 @@ import {
 import {useUser} from "~/contexts/user-context"
 import {z, type ZodTypeAny} from "zod"
 import Board from "~/routes/authed/game/board"
+import styles from "./now-playing.module.scss"
 
 type NowPlayingProps = {
   readonly game: Game
@@ -82,8 +83,9 @@ const NowPlaying: FC<NowPlayingProps> = props => {
   }
 
   const isTurn =
-    game.moves.length === 0 ? game.playerOneId === user.id :
-      game.moves[game.moves.length - 1].playerId !== user.id
+      game.winner == null &&
+      (game.moves.length === 0 ?
+        game.playerOneId === user.id : game.moves[game.moves.length - 1].playerId !== user.id)
 
   const onCellClick = async (coordinate: Coordinate) => {
     if (isTurn) {
@@ -99,10 +101,16 @@ const NowPlaying: FC<NowPlayingProps> = props => {
   }
 
   return (
-    <div>
+    <div className={styles.nowPlaying}>
+      { isTurn && <YourTurnBanner/>}
       <Board game={game} isTurn={isTurn} onCellClick={onCellClick}/>
     </div>
   )
 }
+
+const YourTurnBanner = () =>
+  <div className={styles.yourTurn}>
+    <div>Your Turn</div>
+  </div>
 
 export default NowPlaying

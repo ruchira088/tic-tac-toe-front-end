@@ -28,7 +28,6 @@ class LocalStorage implements KvStore<string> {
   set(key: string, value: string): void {
     localStorage.setItem(key, value)
   }
-
 }
 
 class CookieStore implements KvStore<string> {

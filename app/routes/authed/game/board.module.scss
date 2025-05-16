@@ -19,7 +19,7 @@ $border: 1px solid black;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 10em;
+      font-size: clamp(6em, 20vw, 12em);
       height: 1em;
       width: 1em;
 
@@ -36,6 +36,20 @@ $border: 1px solid black;
       &:nth-child(2) {
         border-left: $border;
         border-right: $border;
+      }
+
+      &.winner {
+        &.vertical {
+        }
+
+        &.horizontal {
+        }
+
+        &.forwardDiagonal {
+        }
+
+        &.backwardDiagonal {
+        }
       }
     }
   }

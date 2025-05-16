@@ -29,7 +29,8 @@ export const Move = z.object({
 export type Move = z.infer<typeof Move>
 
 export enum WinningRule {
-  Diagonal = "Diagonal",
+  ForwardDiagonal = "ForwardDiagonal",
+  BackwardDiagonal = "BackwardDiagonal",
   Horizontal = "Horizontal",
   Vertical = "Vertical"
 }
@@ -51,7 +52,7 @@ export const Game = z.object({
   playerOneId: z.string(),
   playerTwoId: z.string(),
   moves: z.array(Move),
-  winner: Winner.or(z.null()).optional()
+  winner: Winner.nullable().optional()
 })
 
 export type Game = z.infer<typeof Game>

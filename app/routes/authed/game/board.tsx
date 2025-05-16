@@ -38,9 +38,21 @@ const Board: FC<BoardProps> = props => {
     grid[move.coordinate.y][move.coordinate.x] = move.playerId === props.game.playerOneId ? Symbol.Circle : Symbol.Cross
   })
 
-  const nextRemoval: Coordinate | null =
-    props.game.winner === null &&
-    applicableMoves.length === 6 ? applicableMoves[0].coordinate : null
+  const isNextRemoval = (x: number, y: number) => {
+    if (props.game.winner === null && applicableMoves.length === 6) {
+      const first = applicableMoves[0].coordinate
+
+      return first.x === x && first.y === y
+    } else {
+      return false
+    }
+  }
+
+  const isWinningCoordinate =
+    (x: number, y: number) =>
+      props.game.winner?.coordinates.some(coordinate => coordinate.x === x && coordinate.y === y)
+
+  const winningRuleStyle = firstLetterLower(props.game.winner?.winningRule || "NoWinner")
 
   return (
     <div className={styles.board}>
@@ -51,7 +63,14 @@ const Board: FC<BoardProps> = props => {
               row.map((cell, x) =>
                 <div
                   key={x}
-                  className={classNames(styles.cell, {[styles.nextRemoval]: nextRemoval?.x === x && nextRemoval.y === y})}
+                  className={
+                    classNames(
+                      styles.cell,
+                      {[styles[winningRuleStyle]]: props.game.winner != null},
+                      {[styles.nextRemoval]: isNextRemoval(x, y)},
+                      {[styles.winningCoordinate]: isWinningCoordinate(x, y)}
+                    )
+                  }
                   onClick={() => props.onCellClick({x, y})}>
                   {cell}
                 </div>
@@ -63,5 +82,7 @@ const Board: FC<BoardProps> = props => {
     </div>
   )
 }
+
+const firstLetterLower = (str: string) => str.charAt(0).toLowerCase() + str.slice(1)
 
 export default Board
