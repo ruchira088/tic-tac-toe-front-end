@@ -70,5 +70,4 @@ class AuthVault {
   }
 }
 
-export const AuthenticationToken =
-  new AuthVault(new LocalStorage())
+export const AuthenticationToken = new AuthVault(new CookieStore("." + window.location.hostname, 30))
