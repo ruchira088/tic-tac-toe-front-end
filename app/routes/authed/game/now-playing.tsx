@@ -14,10 +14,12 @@ import {
 import {useUser} from "~/contexts/user-context"
 import {z, type ZodTypeAny} from "zod"
 import Board from "~/routes/authed/game/board"
+import {ArrowBackIosNewOutlined as LeftArrow} from "@mui/icons-material"
 
 import waitingUrl from "~/images/waiting.svg"
 import styles from "./now-playing.module.scss"
 import {Button} from "@mui/material"
+import {Link} from "react-router"
 
 type NowPlayingProps = {
   readonly game: Game
@@ -107,7 +109,9 @@ const NowPlaying: FC<NowPlayingProps> = props => {
     <div className={styles.nowPlaying}>
       { isTurn && <YourTurnBanner/>}
       <Board game={game} isTurn={isTurn} onCellClick={onCellClick}/>
-      <Button>Main Menu</Button>
+      <Button variant="contained" className={styles.backButton}>
+        <Link to="/home"><LeftArrow/>Main Menu</Link>
+      </Button>
     </div>
   )
 }

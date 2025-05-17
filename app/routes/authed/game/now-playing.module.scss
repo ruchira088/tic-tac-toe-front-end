@@ -1,6 +1,18 @@
 .nowPlaying {
   position: relative;
 
+  .backButton {
+    color: white;
+    background: #6964F1;
+    margin: 1em 0;
+
+    a {
+      color: white;
+      text-decoration: none;
+      display: flex;
+    }
+  }
+
   .yourTurn {
     display: flex;
     top: -2em;
