@@ -1,0 +1,39 @@
+.indexPage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    .mainTitle {
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 3em auto;
+    width: 100%;
+
+    .button {
+      font-size: 1.5em;
+      margin: 0.5em;
+      width: 50%;
+      min-width: 200px;
+
+      a {
+        color: white;
+        text-decoration: none;
+      }
+    }
+  }
+
+}

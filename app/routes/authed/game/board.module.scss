@@ -38,7 +38,10 @@ $border: 1px solid black;
         border-right: $border;
       }
 
-      &.winner {
+      &.winningCoordinate {
+        background: darkslateblue;
+        color: white;
+
         &.vertical {
         }
 

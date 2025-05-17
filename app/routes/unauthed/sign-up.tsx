@@ -4,7 +4,7 @@ import {Link, useNavigate, useSearchParams} from "react-router"
 import {signUp, signUpAsGuest} from "~/services/user-service"
 
 import styles from "./sign-up.module.scss"
-import logo from "~/images/logo.svg"
+import logoUrl from "~/images/logo.svg"
 
 const SignUp = () => {
   const [email, setEmail] = useState("")
@@ -34,7 +34,7 @@ const SignUp = () => {
     <div className={styles.signUpPage}>
       <div className={styles.signUpDialog}>
         <div className={styles.signUpHeader}>
-          <img src={logo} alt="logo" className={styles.logo}/>
+          <img src={logoUrl} alt="logo" className={styles.logo}/>
           <div className={styles.signUpHeading}>Tic Tac Toe</div>
           <div className={styles.signUpSubHeading}>Register for an account</div>
         </div>

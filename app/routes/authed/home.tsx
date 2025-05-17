@@ -18,7 +18,7 @@ import {createGame, getPendingGames, type PendingGame} from "~/services/game-ser
 import {useMatches, useNavigate} from "react-router"
 import {useUser} from "~/contexts/user-context"
 import {AuthenticationToken} from "~/services/kv-store"
-import logo from "~/images/logo.svg"
+import logoUrl from "~/images/logo.svg"
 
 import styles from "./home.module.scss"
 
@@ -191,7 +191,7 @@ const Home = () => {
     <div className={styles.homePage}>
       <div className={styles.menu}>
         <div className={styles.header}>
-          <img src={logo} alt="logo" className={styles.logo}/>
+          <img src={logoUrl} alt="logo" className={styles.logo}/>
           <div className={styles.title}>Tic Tac Toe</div>
         </div>
         <div className={styles.topMenu}>

@@ -14,7 +14,10 @@ import {
 import {useUser} from "~/contexts/user-context"
 import {z, type ZodTypeAny} from "zod"
 import Board from "~/routes/authed/game/board"
+
+import waitingUrl from "~/images/waiting.svg"
 import styles from "./now-playing.module.scss"
+import {Button} from "@mui/material"
 
 type NowPlayingProps = {
   readonly game: Game
@@ -104,6 +107,7 @@ const NowPlaying: FC<NowPlayingProps> = props => {
     <div className={styles.nowPlaying}>
       { isTurn && <YourTurnBanner/>}
       <Board game={game} isTurn={isTurn} onCellClick={onCellClick}/>
+      <Button>Main Menu</Button>
     </div>
   )
 }
@@ -111,6 +115,7 @@ const NowPlaying: FC<NowPlayingProps> = props => {
 const YourTurnBanner = () =>
   <div className={styles.yourTurn}>
     <div>Your Turn</div>
+    <img src={waitingUrl} alt="Your turn" className={styles.yourTurnImage}/>
   </div>
 
 export default NowPlaying

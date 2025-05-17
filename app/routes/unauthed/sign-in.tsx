@@ -2,7 +2,7 @@ import {useState} from "react"
 import {Button, TextField} from "@mui/material"
 import {Link, useNavigate, useSearchParams} from "react-router"
 import {signIn, signUpAsGuest} from "~/services/user-service"
-import logo from "~/images/logo.svg"
+import logoUrl from "~/images/logo.svg"
 
 import styles from "./sign-in.module.scss"
 
@@ -32,7 +32,7 @@ const SignIn = () => {
     <div className={styles.signInPage}>
       <div className={styles.signInDialog}>
         <div className={styles.signInHeader}>
-          <img src={logo} alt="logo" className={styles.logo}/>
+          <img src={logoUrl} alt="logo" className={styles.logo}/>
           <div className={styles.signInHeading}>Tic Tac Toe</div>
           <div className={styles.signInSubHeading}>Please login to your account</div>
         </div>

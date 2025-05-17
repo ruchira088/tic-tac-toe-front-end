@@ -2,6 +2,9 @@ import {Link, useNavigate} from "react-router"
 import {Button} from "@mui/material"
 import {signUpAsGuest} from "~/services/user-service"
 
+import logoUrl from "~/images/logo.svg"
+import styles from "./index.module.scss"
+
 const Index = () => {
   const navigate = useNavigate()
 
@@ -16,12 +19,20 @@ const Index = () => {
   }
 
   return (
-    <div>
-      <div>Play Tic Tac Toe</div>
-      <div>
-        <Button variant="contained" onClick={onNewGame}>New Game</Button>
-        <Button variant="contained" onClick={onJoinGame}>Join Game</Button>
-        <Link to="/sign-in"><Button variant="contained">Sign In</Button></Link>
+    <div className={styles.indexPage}>
+      <div className={styles.header}>
+        <div className={styles.logo}>
+          <img src={logoUrl} alt="logo" />
+        </div>
+        <div className={styles.title}>
+          <div className={styles.mainTitle}>Tic Tac Toe</div>
+          <div className={styles.subTitle}>Play with your friends</div>
+        </div>
+      </div>
+      <div className={styles.actions}>
+        <Button className={styles.button} variant="contained" onClick={onNewGame}>New Game</Button>
+        <Button className={styles.button} variant="contained" onClick={onJoinGame}>Join Game</Button>
+        <Button className={styles.button} variant="contained"><Link to="/sign-in">Sign In</Link></Button>
       </div>
     </div>
   )
