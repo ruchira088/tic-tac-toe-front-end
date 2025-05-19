@@ -7,7 +7,7 @@ const PendingGame = z.object({
   title: z.string(),
   createdAt: z.string(),
   createdBy: z.string(),
-  gameStartedAt: z.null().optional().or(z.date({coerce: true}))
+  gameStartedAt: z.date({coerce: true}).nullable().optional()
 })
 
 export type PendingGame = z.infer<typeof PendingGame>
