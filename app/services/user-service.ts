@@ -13,7 +13,7 @@ type AuthToken = z.infer<typeof AuthToken>
 
 const User = z.object({
   id: z.string(),
-  email: z.string().nullish(),
+  email: z.email().nullish(),
   username: z.string(),
   createdAt: z.string()
 })
