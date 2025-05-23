@@ -92,8 +92,6 @@ const WsMessage = z.discriminatedUnion("type", [
 
 export type WsMessage = z.infer<typeof WsMessage>
 
-export type Message = Move | Winner
-
 export const createGame = async (gameTitle: string): Promise<PendingGame> => {
   const response = await axiosClient.post<unknown>("/game/pending", {gameTitle})
   const pendingGame: PendingGame = PendingGame.parse(response.data)
@@ -141,7 +139,9 @@ export const placeCoordinate = async (gameId: string, coordinate: Coordinate): P
   return game
 }
 
-export const subscribeToGameUpdatesViaWebSocket = (gameId: string, onMessage: (msg: Message) => void): WebSocket => {
+export type onMessageCallback = (move: Move | null, winner: Winner | null) => void
+
+export const subscribeToGameUpdatesViaWebSocket = (gameId: string, onMessage: onMessageCallback): WebSocket => {
   const webSocket = new WebSocket(`${wsBaseUrl()}/game/id/${gameId}/updates`)
 
   webSocket.onopen = () => {
@@ -151,8 +151,10 @@ export const subscribeToGameUpdatesViaWebSocket = (gameId: string, onMessage: (m
   webSocket.onmessage = (event) => {
     const message: WsMessage = WsMessage.parse(JSON.parse(event.data))
 
-    if (message.type !== WsMessageType.Ping) {
-      onMessage(message.data)
+    if (message.type === WsMessageType.MoveUpdate) {
+      onMessage(message.data, null)
+    } else if (message.type === WsMessageType.Winner) {
+      onMessage(null, message.data)
     }
   }
 
@@ -163,17 +165,17 @@ export const subscribeToGameUpdatesViaWebSocket = (gameId: string, onMessage: (m
   return webSocket
 }
 
-export const subscribeToGameUpdatesViaSse = (gameId: string, onMessage: (msg: Message) => void): EventSource => {
+export const subscribeToGameUpdatesViaSse = (gameId: string, onMessage: onMessageCallback): EventSource => {
   const eventSource: EventSource = new EventSource(`${BASE_URL}/game/id/${gameId}/updates`, {withCredentials: true})
 
   eventSource.addEventListener(SseMessageType.MoveUpdate, event => {
     const move: Move = Move.parse(event.data)
-    onMessage(move)
+    onMessage(move, null)
   })
 
   eventSource.addEventListener(SseMessageType.Winner, event => {
     const winner: Winner = Winner.parse(event.data)
-    onMessage(winner)
+    onMessage(null, winner)
   })
 
   eventSource.onopen = () => {

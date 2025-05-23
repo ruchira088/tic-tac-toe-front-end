@@ -3,15 +3,14 @@ import {
   type Coordinate,
   Game,
   getGameById,
-  type Message,
   Move,
+  type onMessageCallback,
   placeCoordinate,
   subscribeToGameUpdatesViaSse,
   subscribeToGameUpdatesViaWebSocket,
   Winner
 } from "~/services/game-service"
 import {useUser} from "~/contexts/user-context"
-import {type ZodType} from "zod/v4"
 import Board from "~/routes/authed/game/board"
 import {ArrowBackIosNewOutlined as LeftArrow} from "@mui/icons-material"
 
@@ -24,10 +23,6 @@ type NowPlayingProps = {
   readonly game: Game
 }
 
-function check<T>(schema: ZodType<T>, value: unknown): value is T {
-  return schema.safeParse(value).success
-}
-
 const NowPlaying: FC<NowPlayingProps> = props => {
   const [game, setGame] = useState(props.game)
   const user = useUser()
@@ -37,22 +32,22 @@ const NowPlaying: FC<NowPlayingProps> = props => {
     let eventSource: EventSource | null = null
 
     try {
-      websocket = subscribeToGameUpdatesViaWebSocket(game.id, onMessage)
+      websocket = subscribeToGameUpdatesViaWebSocket(game.id, onMessageCallback)
     } catch (error) {
       console.error("Unable to connect to game updates via WebSockets. Attempting to connect via SSE...")
-      eventSource = subscribeToGameUpdatesViaSse(game.id, onMessage)
+      eventSource = subscribeToGameUpdatesViaSse(game.id, onMessageCallback)
     }
 
     const intervalId = setInterval(async () => {
       let refresh = false
 
       if (websocket !== null && websocket.readyState === websocket.CLOSED) {
-        websocket = subscribeToGameUpdatesViaWebSocket(game.id, onMessage)
+        websocket = subscribeToGameUpdatesViaWebSocket(game.id, onMessageCallback)
         refresh = true
       }
 
       if (eventSource !== null && eventSource.readyState === eventSource.CLOSED) {
-        eventSource = subscribeToGameUpdatesViaSse(game.id, onMessage)
+        eventSource = subscribeToGameUpdatesViaSse(game.id, onMessageCallback)
         refresh = true
       }
 
@@ -67,21 +62,24 @@ const NowPlaying: FC<NowPlayingProps> = props => {
     }, 1000)
 
     return () => {
-      websocket?.close()
-      eventSource?.close()
       clearInterval(intervalId)
+
+      try {
+        websocket?.close()
+        eventSource?.close()
+      } catch (e) {
+        console.debug(e)
+      }
     }
   }, [game.id]
   )
 
-  const onMessage = (message: Message) => {
-    if (check(Move, message)) {
-      const move = message as Move
+  const onMessageCallback: onMessageCallback = (move: Move | null, winner: Winner | null) => {
+    if (move !== null) {
       if (move.playerId !== user.id) {
         setGame(game => ({...game, moves: game.moves.concat(move)}))
       }
-    } else if (check(Winner, message)) {
-      const winner = message as Winner
+    } else if (winner !== null) {
       setGame(game => ({...game, winner}))
     }
   }
