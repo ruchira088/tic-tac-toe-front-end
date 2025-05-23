@@ -1,13 +1,14 @@
-import {z} from "zod"
+import {z} from "zod/v4"
 import axiosClient from "~/services/http-client"
 import {BASE_URL, wsBaseUrl} from "~/config/config"
+import {ZodDate} from "~/types/ZodTypes"
 
 const PendingGame = z.object({
   id: z.string(),
   title: z.string(),
   createdAt: z.string(),
   createdBy: z.string(),
-  gameStartedAt: z.date({coerce: true}).nullable().optional()
+  gameStartedAt: ZodDate.nullish()
 })
 
 export type PendingGame = z.infer<typeof PendingGame>
@@ -20,9 +21,9 @@ const Coordinate = z.object({
 export type Coordinate = z.infer<typeof Coordinate>
 
 export const Move = z.object({
-  id: z.string().nullable().optional(),
+  id: z.string().nullish(),
   playerId: z.string(),
-  performedAt: z.date({coerce: true}),
+  performedAt: ZodDate.nullish(),
   coordinate: Coordinate
 })
 
@@ -37,7 +38,7 @@ export enum WinningRule {
 
 export const Winner = z.object({
   playerId: z.string(),
-  winningRule: z.nativeEnum(WinningRule),
+  winningRule: z.enum(WinningRule),
   coordinates: z.array(Coordinate)
 })
 
@@ -46,13 +47,13 @@ export type Winner = z.infer<typeof Winner>
 export const Game = z.object({
   id: z.string(),
   title: z.string(),
-  createdAt: z.date({coerce: true}),
+  createdAt: ZodDate.nullish(),
   createdBy: z.string(),
-  startedAt: z.date({coerce: true}),
+  startedAt: ZodDate.nullish(),
   playerOneId: z.string(),
   playerTwoId: z.string(),
   moves: z.array(Move),
-  winner: Winner.nullable().optional()
+  winner: Winner.nullish()
 })
 
 export type Game = z.infer<typeof Game>
@@ -80,7 +81,7 @@ enum WsMessageType {
 
 const PingMessage = z.object({
   userId: z.string(),
-  timestamp: z.date({coerce: true})
+  timestamp: ZodDate.nullish()
 })
 
 const WsMessage = z.discriminatedUnion("type", [
@@ -88,6 +89,8 @@ const WsMessage = z.discriminatedUnion("type", [
   z.object({type: z.literal(WsMessageType.MoveUpdate), data: Move}),
   z.object({type: z.literal(WsMessageType.Winner), data: Winner})
 ])
+
+export type WsMessage = z.infer<typeof WsMessage>
 
 export type Message = Move | Winner
 
@@ -131,7 +134,7 @@ export const getGameById = async (gameId: string): Promise<Game | null> => {
   return game
 }
 
-export const move = async (gameId: string, coordinate: Coordinate): Promise<Game> => {
+export const placeCoordinate = async (gameId: string, coordinate: Coordinate): Promise<Game> => {
   const response = await axiosClient.post<unknown>(`/game/id/${gameId}/move`, coordinate)
   const game: Game = Game.parse(response.data)
 
@@ -146,7 +149,7 @@ export const subscribeToGameUpdatesViaWebSocket = (gameId: string, onMessage: (m
   }
 
   webSocket.onmessage = (event) => {
-    const message = WsMessage.parse(JSON.parse(event.data))
+    const message: WsMessage = WsMessage.parse(JSON.parse(event.data))
 
     if (message.type !== WsMessageType.Ping) {
       onMessage(message.data)

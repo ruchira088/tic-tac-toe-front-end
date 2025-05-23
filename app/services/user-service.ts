@@ -1,18 +1,19 @@
-import {z} from "zod"
+import {z} from "zod/v4"
 import axiosClient from "~/services/http-client"
 import {AuthenticationToken} from "~/services/kv-store"
+import {ZodDate} from "~/types/ZodTypes"
 
 const AuthToken = z.object({
   token: z.string(),
   userId: z.string(),
-  issuedAt: z.string()
+  issuedAt: ZodDate,
 })
 
 type AuthToken = z.infer<typeof AuthToken>
 
 const User = z.object({
   id: z.string(),
-  email: z.string().or(z.null()).optional(),
+  email: z.string().nullish(),
   username: z.string(),
   createdAt: z.string()
 })

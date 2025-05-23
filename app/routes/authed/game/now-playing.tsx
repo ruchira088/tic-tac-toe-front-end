@@ -1,18 +1,17 @@
 import {type FC, useEffect, useState} from "react"
 import {
   type Coordinate,
-  Game as GameSchema,
-  type Game,
+  Game,
   getGameById,
   type Message,
-  move,
   Move,
+  placeCoordinate,
   subscribeToGameUpdatesViaSse,
   subscribeToGameUpdatesViaWebSocket,
   Winner
 } from "~/services/game-service"
 import {useUser} from "~/contexts/user-context"
-import {z, type ZodTypeAny} from "zod"
+import {type ZodType} from "zod/v4"
 import Board from "~/routes/authed/game/board"
 import {ArrowBackIosNewOutlined as LeftArrow} from "@mui/icons-material"
 
@@ -25,7 +24,7 @@ type NowPlayingProps = {
   readonly game: Game
 }
 
-function check<T extends ZodTypeAny>(schema: T, value: unknown): value is z.infer<T> {
+function check<T>(schema: ZodType<T>, value: unknown): value is T {
   return schema.safeParse(value).success
 }
 
@@ -77,13 +76,13 @@ const NowPlaying: FC<NowPlayingProps> = props => {
 
   const onMessage = (message: Message) => {
     if (check(Move, message)) {
-      const move: Move = message
+      const move = message as Move
       if (move.playerId !== user.id) {
-        setGame(game => GameSchema.parse({...game, moves: game.moves.concat(move)}))
+        setGame(game => ({...game, moves: game.moves.concat(move)}))
       }
     } else if (check(Winner, message)) {
-      const winner: Winner = message
-      setGame(game => GameSchema.parse({...game, winner}))
+      const winner = message as Winner
+      setGame(game => ({...game, winner}))
     }
   }
 
@@ -94,14 +93,14 @@ const NowPlaying: FC<NowPlayingProps> = props => {
 
   const onCellClick = async (coordinate: Coordinate) => {
     if (isTurn) {
-      setGame(game => GameSchema.parse({
+      setGame(game => ({
             ...game,
             moves: game.moves.concat({playerId: user.id, coordinate: coordinate, performedAt: new Date()})
           }
         )
       )
 
-      await move(game.id, coordinate)
+      await placeCoordinate(game.id, coordinate)
     }
   }
 
