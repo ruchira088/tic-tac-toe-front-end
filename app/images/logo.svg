@@ -1,19 +1,21 @@
 <svg width="150" height="150" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">
     <style>
         .board-line {
-        stroke: #333; /* Dark gray color for the board lines */
-        stroke-width: 8; /* Thickness of the board lines */
-        stroke-linecap: round; /* Rounded ends for the board lines */
+            stroke: #333; /* Dark gray color for the board lines */
+            stroke-width: 8; /* Thickness of the board lines */
+            stroke-linecap: round; /* Rounded ends for the board lines */
         }
+
         .circle-piece {
-        stroke: #3498db; /* Blue color for 'O' */
-        stroke-width: 6;
-        fill: none; /* No fill for the circle, just the stroke */
+            stroke: #3498db; /* Blue color for 'O' */
+            stroke-width: 6;
+            fill: none; /* No fill for the circle, just the stroke */
         }
+
         .cross-piece {
-        stroke: #e74c3c; /* Red color for 'X' */
-        stroke-width: 7;
-        stroke-linecap: round;
+            stroke: #e74c3c; /* Red color for 'X' */
+            stroke-width: 7;
+            stroke-linecap: round;
         }
     </style>
 
