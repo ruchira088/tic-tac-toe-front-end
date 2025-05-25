@@ -35,5 +35,4 @@
     <line x1="110" y1="40" x2="140" y2="10" class="cross-piece"/>
 
     <circle cx="25" cy="75" r="15" class="circle-piece"/>
-
 </svg>
