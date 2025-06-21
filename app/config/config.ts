@@ -19,7 +19,8 @@ const baseUrl = () => {
     if (apiUrlViaEnv) {
       return apiUrlViaEnv
     } else {
-      return inferApiUrl(location.hostname)
+      const apiUrl = `${location.protocol}//${inferApiUrl(location.hostname)}`
+      return apiUrl
     }
   }
 }
