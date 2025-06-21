@@ -19,7 +19,7 @@ const baseUrl = () => {
     if (apiUrlViaEnv) {
       return apiUrlViaEnv
     } else {
-      return inferApiUrl(import.meta.env.VITE_API_DOMAIN, location.hostname)
+      return inferApiUrl(location.hostname)
     }
   }
 }
