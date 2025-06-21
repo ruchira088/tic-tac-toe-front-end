@@ -1,4 +1,4 @@
-import {inferApiUrl} from "./config-helper"
+import {inferApiHostname} from "./config-helper"
 
 const API_URL_QUERY_PARAMETER = "API_URL"
 
@@ -19,7 +19,7 @@ const baseUrl = () => {
     if (apiUrlViaEnv) {
       return apiUrlViaEnv
     } else {
-      const apiUrl = `${location.protocol}//${inferApiUrl(location.hostname)}`
+      const apiUrl = `${location.protocol}//${inferApiHostname(location.hostname)}`
       return apiUrl
     }
   }

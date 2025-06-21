@@ -1,30 +1,19 @@
+export const DEFAULT_DOMAIN = "ruchij.com"
+export const DEFAULT_API_DOMAIN = `home.${DEFAULT_DOMAIN}`
+export const API_PREFIX = "api"
 
-export const DEFAULT_API_DOMAIN = ".home.ruchij.com"
-export const API_PREFIX = "api."
-
-export const inferApiUrl = (frontendHost: string, apiDomain: string = DEFAULT_API_DOMAIN): string => {
-  let boundary: number = 0
-  let matchCount: number = 0
-  const max = Math.min(apiDomain.length, frontendHost.length)
-
-  for (let i = 1; i <= max; i++) {
-    const domainChar = apiDomain.charAt(apiDomain.length - i)
-    const hostChar = frontendHost.charAt(frontendHost.length - i)
-
-    if (domainChar !== hostChar) {
-      break;
+export const inferApiHostname = (frontendHost: string): string => {
+  const hostname = (() => {
+    if (frontendHost.endsWith(DEFAULT_API_DOMAIN)) {
+      return frontendHost
+    } else if (frontendHost.endsWith(DEFAULT_DOMAIN)) {
+      return frontendHost.replace(DEFAULT_DOMAIN, DEFAULT_API_DOMAIN)
+    } else {
+      return frontendHost
     }
+  })()
 
-    if (domainChar === ".") {
-      matchCount++
-      boundary = i
-    }
-  }
+  const apiHostname = API_PREFIX + "." + hostname
 
-  if (matchCount >= 2) {
-    const apiUrl = API_PREFIX + frontendHost.substring(0, frontendHost.length - boundary) + apiDomain
-    return apiUrl
-  } else {
-    return API_PREFIX + frontendHost
-  }
+  return apiHostname
 }
