@@ -139,6 +139,7 @@ jobs:
 
     needs:
       - transpile-and-test
+      - deploy-to-s3-and-cloudfront
       - build-and-publish-docker-image
       - deploy-to-k8s
 
