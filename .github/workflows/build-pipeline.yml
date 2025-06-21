@@ -29,6 +29,9 @@ jobs:
       - name: Type check
         run: npm run typecheck
 
+      - name: Run tests
+        run: npm test
+
   deploy-to-s3-and-cloudfront:
     runs-on: ubuntu-latest
 
