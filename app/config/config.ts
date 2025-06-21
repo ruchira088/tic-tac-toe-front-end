@@ -2,7 +2,7 @@ import {inferApiHostname} from "./config-helper"
 
 const API_URL_QUERY_PARAMETER = "API_URL"
 
-const baseUrl = () => {
+const apiBaseUrl = () => {
   const location = window.location
   const queryParams: URLSearchParams = new URLSearchParams(location.search)
   const apiUrlViaQueryParams = queryParams.get(API_URL_QUERY_PARAMETER)
@@ -25,7 +25,7 @@ const baseUrl = () => {
   }
 }
 
-export const BASE_URL = baseUrl()
+export const API_BASE_URL = apiBaseUrl()
 
 const getWsBaseUrl = (baseUrl: string) => {
   const url = new URL(baseUrl)
@@ -37,4 +37,4 @@ const getWsBaseUrl = (baseUrl: string) => {
   return `${protocol}://${host}${path}`
 }
 
-export const wsBaseUrl = () => getWsBaseUrl(BASE_URL)
+export const wsBaseUrl = () => getWsBaseUrl(API_BASE_URL)

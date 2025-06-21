@@ -1,6 +1,6 @@
 import {z} from "zod/v4"
 import axiosClient from "~/services/http-client"
-import {BASE_URL, wsBaseUrl} from "~/config/config"
+import {API_BASE_URL, wsBaseUrl} from "~/config/config"
 import {ZodDate} from "~/types/ZodTypes"
 
 const PendingGame = z.object({
@@ -166,7 +166,7 @@ export const subscribeToGameUpdatesViaWebSocket = (gameId: string, onMessage: on
 }
 
 export const subscribeToGameUpdatesViaSse = (gameId: string, onMessage: onMessageCallback): EventSource => {
-  const eventSource: EventSource = new EventSource(`${BASE_URL}/game/id/${gameId}/updates`, {withCredentials: true})
+  const eventSource: EventSource = new EventSource(`${API_BASE_URL}/game/id/${gameId}/updates`, {withCredentials: true})
 
   eventSource.addEventListener(SseMessageType.MoveUpdate, event => {
     const move: Move = Move.parse(event.data)

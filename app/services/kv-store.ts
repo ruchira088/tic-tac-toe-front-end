@@ -1,4 +1,5 @@
 import Cookies from "js-cookie"
+import {API_BASE_URL} from "~/config/config"
 
 interface KvStore<T> {
   get(key: string): T | undefined
@@ -69,4 +70,28 @@ class AuthVault {
   }
 }
 
-export const AuthenticationToken = new AuthVault(new CookieStore("." + window.location.hostname, 30))
+const cookieStoreDomain = (apiUrl: string, frontendUrl: string) => {
+  const api = new URL(apiUrl).hostname.split(".")
+  const frontend = new URL(frontendUrl).hostname.split(".")
+
+  const limit = Math.min(frontend.length, api.length)
+  let matchCount = 0
+
+  for (let i = 1; i <= limit; i++) {
+    const frontendPart = frontend[frontend.length - i]
+    const apiPart = api[api.length - i]
+
+    if (apiPart !== frontendPart) {
+      break
+    } else {
+      matchCount++
+    }
+  }
+
+  const subdomain = frontend.slice(frontend.length - matchCount).join(".")
+
+  return subdomain
+}
+
+export const AuthenticationToken =
+  new AuthVault(new CookieStore("." + cookieStoreDomain(API_BASE_URL, window.location.href), 30))
